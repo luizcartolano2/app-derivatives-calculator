@@ -2,6 +2,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 
 val detektVersion = "1.21.0"
+val kotestVersion = "5.5.4"
 
 plugins {
     kotlin("jvm") version "1.8.0"
@@ -12,25 +13,38 @@ plugins {
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
+application {
+    mainClass.set("MainKt")
+}
+
 repositories {
     mavenCentral()
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
     testImplementation(kotlin("test"))
+
+    // kotest
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    // detekt
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 
 kotlin {
     jvmToolchain(8)
 }
 
-application {
-    mainClass.set("MainKt")
+tasks.register("integrationTests") {
+    doLast {
+        println("Do nothing. Integration tests are included into 'build' task.")
+    }
 }
 
 detekt {
