@@ -31,10 +31,10 @@ class EuroVanillaPrice {
 
         // S0 * e^(-qT) * N(d1)
         val eqPart1 = spot * exp(-vanilla.foreignRate * vanilla.tenor) *
-                normalDistribution.cumulativeDistribution(blackFirstDerivativeCalc)
+            normalDistribution.cumulativeDistribution(blackFirstDerivativeCalc)
         // K * e^(-rT) * N(d2)
         val eqPart2 = vanilla.strike * exp(-vanilla.interestRate * vanilla.tenor) *
-                normalDistribution.cumulativeDistribution(blackSecondDerivativeCalc)
+            normalDistribution.cumulativeDistribution(blackSecondDerivativeCalc)
 
         // C = S0 * e^(-qT) * N(d1) - K * e^(-rT) * N(d2)
         return eqPart1 - eqPart2
