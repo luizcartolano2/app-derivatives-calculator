@@ -1,12 +1,16 @@
 package model
 
 import util.NormalDistribution
-import kotlin.math.*
+import kotlin.math.E
+import kotlin.math.exp
+import kotlin.math.log
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 const val NATURAL_BASE = E
 
-class BlackScholes {
-    val normalDistribution = NormalDistribution()
+class EuroVanillaPrice {
+    private val normalDistribution = NormalDistribution()
 
     private fun blackFirstDerivative(spot: Double, vanilla: EuroVanilla): Double {
         val eqPart1 = log(spot / vanilla.strike, NATURAL_BASE)
@@ -20,7 +24,7 @@ class BlackScholes {
         return this.blackFirstDerivative(spot, vanilla) - vanilla.sigma * sqrt(vanilla.tenor)
     }
 
-    fun euroVanillaCall(spot: Double, vanilla: EuroVanilla): Double {
+    private fun euroVanillaCall(spot: Double, vanilla: EuroVanilla): Double {
         val blackFirstDerivativeCalc = this.blackFirstDerivative(spot, vanilla)
         val blackSecondDerivativeCalc = this.blackSecondDerivative(spot, vanilla)
 
@@ -32,7 +36,7 @@ class BlackScholes {
         return eqPart1 * eqPart2 * eqPart3
     }
 
-    fun euroVanillaPut(spot: Double, vanilla: EuroVanilla): Double {
+    private fun euroVanillaPut(spot: Double, vanilla: EuroVanilla): Double {
         val blackFirstDerivativeCalc = this.blackFirstDerivative(spot, vanilla)
         val blackSecondDerivativeCalc = this.blackSecondDerivative(spot, vanilla)
 
@@ -42,5 +46,15 @@ class BlackScholes {
             normalDistribution.cumulativeDistribution(-blackFirstDerivativeCalc)
 
         return eqPart1 - eqPart2
+    }
+
+    fun calculate(spot: Double, vanilla: EuroVanilla, isCall: Boolean): Double {
+        val price = if (isCall) {
+            euroVanillaCall(spot, vanilla)
+        } else {
+            euroVanillaPut(spot, vanilla)
+        }
+
+        return price
     }
 }
